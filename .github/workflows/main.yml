@@ -1,24 +1,23 @@
-name: CI/CD
+name: Deploy production
 
 on:
   push:
-    branches:
-      - main # Thay đổi tên nhánh tại đây nếu cần thiết
+    branches: [ "main" ]
 
 jobs:
-  build:
+ build:
+    name: Deploy to Server
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Deploy to VPS
-        uses: easingthemes/ssh-deploy@v2
+      - name: executing remote ssh commands using key
+        uses: appleboy/ssh-action@master
         with:
-          username: ${{ secrets.VPS_USERNAME }} # Thay đổi tên biến và đặt giá trị trong Secrets của repository
-          host: ${{ secrets.VPS_HOST }} # Thay đổi tên biến và đặt giá trị trong Secrets của repository
-          port: ${{ secrets.VPS_PORT }} # Thay đổi tên biến và đặt giá trị trong Secrets của repository
-          privateKey: ${{ secrets.VPS_PRIVATE_KEY }} # Thay đổi tên biến và đặt giá trị trong Secrets của repository
-          source: . # Đường dẫn đến thư mục chứa mã nguồn của bạn trên GitHub
-          target: /var/www/resume_creative-cv # Thay đổi đường dẫn đến thư mục gốc của website trên VPS
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            pwd
+            cd /var/www/resume_creative-cv
+            pwd
+            git pull
